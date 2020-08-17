@@ -489,7 +489,6 @@ const urlCreated = (
   dispatch<SetSuccessMessageAction>(
     rootActions.setSuccessMessage(successMessage),
   )
-  dispatch<CloseCreateUrlModalAction>(closeCreateUrlModal())
 }
 
 //
