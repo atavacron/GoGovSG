@@ -492,9 +492,14 @@ const urlCreated = (
   dispatch<CloseCreateUrlModalAction>(closeCreateUrlModal())
 }
 
-// API call to create URL
-// If user is not logged in, the createUrl call returns unauthorized,
-// get them to login, else create the url.
+//
+/**
+ * API call to create URL
+ * If user is not logged in, the createUrl call returns unauthorized,
+ * get them to login, else create the url.
+ * @param history
+ * @returns Promise<bool> Whether creation succeeded.
+ */
 const createUrlOrRedirect = (history: History) => async (
   dispatch: ThunkDispatch<
     GoGovReduxState,
@@ -518,7 +523,7 @@ const createUrlOrRedirect = (history: History) => async (
         'Short links should only consist of a-z, 0-9 and hyphens.',
       ),
     )
-    return
+    return false
   }
 
   // Append https:// as the protocol is stripped out
@@ -531,7 +536,7 @@ const createUrlOrRedirect = (history: History) => async (
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage('URL is invalid.'),
     )
-    return
+    return false
   }
 
   const response = await postJson('/api/user/url', { longUrl, shortUrl })
@@ -539,13 +544,14 @@ const createUrlOrRedirect = (history: History) => async (
   if (!response.ok) {
     if (response.status === 401) {
       history.push(LOGIN_PAGE)
-      return
+      return false
     }
     handleError(dispatch, response)
-    return
+    return false
   }
   const json = await response.json()
   urlCreated(dispatch, json.shortUrl)
+  return true
 }
 
 const transferOwnership = (
@@ -579,6 +585,11 @@ const transferOwnership = (
     },
   )
 
+/**
+ * API call to upload a file.
+ * @param file
+ * @returns Promise<bool> Whether file upload succeeded.
+ */
 const uploadFile = (file: File) => async (
   dispatch: ThunkDispatch<
     GoGovReduxState,
@@ -599,7 +610,7 @@ const uploadFile = (file: File) => async (
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage('File is missing.'),
     )
-    return
+    return false
   }
   dispatch<SetIsUploadingAction>(setIsUploading(true))
   const data = new FormData()
@@ -609,10 +620,11 @@ const uploadFile = (file: File) => async (
   dispatch<SetIsUploadingAction>(setIsUploading(false))
   if (!response.ok) {
     await handleError(dispatch, response)
-    return
+    return false
   }
   const json = await response.json()
   urlCreated(dispatch, json.shortUrl)
+  return true
 }
 
 export default {
