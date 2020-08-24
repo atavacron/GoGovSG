@@ -19,7 +19,10 @@ import BetaTag from '../../widgets/BetaTag'
 import CollapsibleMessage from '../../CollapsibleMessage'
 import ConfigOption, { TrailingPosition } from './ConfigOption'
 import PrefixableTextField from './PrefixableTextField'
-import { CollapsibleMessageType, CollapsibleMessagePosition } from '../../CollapsibleMessage/types'
+import {
+  CollapsibleMessagePosition,
+  CollapsibleMessageType,
+} from '../../CollapsibleMessage/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -66,15 +69,17 @@ type LinkInfoEditorProps = {
   onDescriptionChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onContactEmailValidation: (isContactEmailValid: boolean) => void
   onDescriptionValidation: (isDescriptionValid: boolean) => void
+  isMountedOnCreateUrlModal?: boolean
 }
 
 export default function LinkInfoEditor({
-  contactEmail, 
-  description, 
+  contactEmail,
+  description,
   onContactEmailChange,
   onDescriptionChange,
   onContactEmailValidation,
   onDescriptionValidation,
+  isMountedOnCreateUrlModal,
 }: LinkInfoEditorProps) {
   // Styles used in this component.
   const classes = useStyles()
@@ -85,25 +90,18 @@ export default function LinkInfoEditor({
     (state) => state.login.emailValidator,
   )
 
-  const isContactEmailValid =
-    !contactEmail || emailValidator(contactEmail)
+  const isContactEmailValid = !contactEmail || emailValidator(contactEmail)
   const isDescriptionValid =
     description.length <= LINK_DESCRIPTION_MAX_LENGTH &&
     isPrintableAscii(description)
 
-  useEffect(
-    () => {
-      onContactEmailValidation(isContactEmailValid)
-    },
-    [isContactEmailValid]
-  )
+  useEffect(() => {
+    onContactEmailValidation(isContactEmailValid)
+  }, [isContactEmailValid])
 
-  useEffect(
-    () => {
-      onDescriptionValidation(isDescriptionValid)
-    },
-    [isDescriptionValid]
-  )
+  useEffect(() => {
+    onDescriptionValidation(isDescriptionValid)
+  }, [isDescriptionValid])
 
   const contactEmailHelp = (
     <>
@@ -127,16 +125,19 @@ export default function LinkInfoEditor({
 
   return (
     <>
-      <div className={classes.linkInformationHeaderWrapper}>
-        <Typography
-          variant="h3"
-          className={classes.linkInformationHeader}
-          color="primary"
-        >
-          Link information
-        </Typography>
-        <BetaTag />
-      </div>
+      {/* TODO: Move linkInformationHeaderWrapper back to drawer > control panel */}
+      {!isMountedOnCreateUrlModal && (
+        <div className={classes.linkInformationHeaderWrapper}>
+          <Typography
+            variant="h3"
+            className={classes.linkInformationHeader}
+            color="primary"
+          >
+            Link information
+          </Typography>
+          <BetaTag />
+        </div>
+      )}
       <Typography variant="body2" className={classes.linkInformationDesc}>
         The information you enter below will be displayed on our{' '}
         <a href="https://go.gov.sg/go-search" className={classes.hotlink}>

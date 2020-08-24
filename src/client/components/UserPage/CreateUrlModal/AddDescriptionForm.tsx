@@ -28,6 +28,7 @@ export default function AddDescriptionForm(_: AddDescriptionFormProps) {
           onDescriptionChange={onDescriptionChange}
           onContactEmailValidation={setIsContactEmailValid}
           onDescriptionValidation={setIsDescriptionValid}
+          isMountedOnCreateUrlModal
         />
       </ModalMargins>
     </div>
