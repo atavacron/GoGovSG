@@ -106,7 +106,7 @@ export default function AddDescriptionForm(_: AddDescriptionFormProps) {
             disabled={isSaveButtonDisabled}
             color="primary"
             size="large"
-            variant="outlined"
+            variant="contained"
             className={classes.saveButton}
           >
             Save
